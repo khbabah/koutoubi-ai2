@@ -66,6 +66,10 @@ app.include_router(favorites.router, prefix="/api/v1/favorites", tags=["favorite
 app.include_router(subscriptions.router, prefix="/api/v1/subscriptions", tags=["subscriptions"])
 app.include_router(educational_content.router, prefix="/api/v1/educational", tags=["educational"])
 
+# Course aggregation routes
+from app.api import course_aggregation
+app.include_router(course_aggregation.router, prefix="/api/v1", tags=["course-aggregation"])
+
 # Admin routes
 app.include_router(admin_router.router, prefix="/api/v1/admin", tags=["admin"])
 

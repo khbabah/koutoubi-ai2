@@ -1,4 +1,4 @@
-from sqlalchemy import Column, String, Integer, DateTime
+from sqlalchemy import Column, String, Integer, DateTime, Text, JSON
 from sqlalchemy.orm import relationship
 from app.core.database import Base
 from app.models.user import generate_uuid
@@ -14,9 +14,15 @@ class Chapter(Base):
     pdf_path = Column(String)
     page_start = Column(Integer)
     page_end = Column(Integer)
-    niveau = Column(String)  # "2nde", "1ère", "Terminale"
-    matiere = Column(String)  # "mathématiques", "physique", etc.
+    niveau = Column(String)  # "secondaire1", "secondaire2"
+    matiere = Column(String)  # "mathematiques", "physique", etc.
     created_at = Column(DateTime, default=datetime.utcnow)
+    
+    # New fields for improved organization
+    course_id = Column(String, index=True)  # Format: "niveau-annee-matiere"
+    order = Column(Integer, default=0)  # Order within the course
+    prerequisites = Column(JSON, default=list)  # List of prerequisite chapter IDs
+    description = Column(Text)  # Brief description of chapter content
     
     # Relations
     flashcards = relationship("Flashcard", back_populates="chapter")

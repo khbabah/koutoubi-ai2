@@ -1,5 +1,5 @@
 from pydantic import BaseModel
-from typing import Optional
+from typing import Optional, List
 from datetime import datetime
 
 
@@ -11,6 +11,10 @@ class ChapterBase(BaseModel):
     page_end: Optional[int] = None
     niveau: Optional[str] = None
     matiere: Optional[str] = None
+    course_id: Optional[str] = None
+    order: Optional[int] = None
+    prerequisites: Optional[List[str]] = []
+    description: Optional[str] = None
 
 
 class Chapter(ChapterBase):

@@ -159,4 +159,16 @@ export const contentApi = {
   addFavorite: (data: any) => apiClient.post('/favorites/add', data),
   removeFavorite: (courseId: string) => apiClient.delete(`/favorites/remove/${courseId}`),
   checkFavorite: (courseId: string) => apiClient.get(`/favorites/check/${courseId}`),
+  
+  // New aggregation endpoints
+  getCourseFlashcards: (courseId: string, params?: any) =>
+    apiClient.get(`/courses/${courseId}/flashcards`, params),
+  getCourseQuiz: (courseId: string, params?: any) =>
+    apiClient.get(`/courses/${courseId}/quiz`, params),
+  getCourseChapters: (courseId: string) =>
+    apiClient.get(`/courses/${courseId}/chapters`),
+  generateCourseMindmap: (courseId: string) =>
+    apiClient.post(`/courses/${courseId}/mindmap/generate`),
+  generateChapterMindmap: (chapterId: string) =>
+    apiClient.post(`/chapters/${chapterId}/mindmap/generate`),
 };

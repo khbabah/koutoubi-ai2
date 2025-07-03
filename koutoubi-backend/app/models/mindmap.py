@@ -18,6 +18,10 @@ class Mindmap(Base):
     version = Column(Integer, default=1)
     is_ai_generated = Column(Boolean, default=True)
     
+    # New fields for flexible mindmap levels
+    chapter_id = Column(String, nullable=True)  # For chapter-specific mindmaps
+    level = Column(String, default='course')  # 'course' or 'chapter'
+    
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     updated_at = Column(DateTime(timezone=True), onupdate=func.now())
     
