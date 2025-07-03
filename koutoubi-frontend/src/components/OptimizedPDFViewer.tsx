@@ -33,11 +33,14 @@ import {
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import AITutorModal from './AITutorModal';
-import FlashcardsView from './FlashcardsView';
-import QuizView from './QuizView';
+import FlashcardsViewEnhanced from './FlashcardsViewEnhanced';
+import QuizViewEnhanced from './QuizViewEnhanced';
 import MindmapView from './mindmap/MindmapView';
 import { useSubscription } from '@/hooks/useSubscription';
 import UsageLimitBadge from './UsageLimitBadge';
+import { StudyModeSelector } from './StudyModeSelector';
+import { ContentHierarchy } from './ContentHierarchy';
+import { useStudyMode } from '@/hooks/useStudyMode';
 
 interface Chapter {
   id: string;
@@ -96,6 +99,11 @@ export default function OptimizedPDFViewer() {
   const [activeTab, setActiveTab] = useState<'learn' | 'flashcards' | 'quiz' | 'mindmap'>('learn');
   const [showMenu, setShowMenu] = useState(false);
   const [courseError, setCourseError] = useState<string | null>(null);
+  
+  // Study mode hooks
+  const flashcardsMode = useStudyMode({ feature: 'flashcards' });
+  const quizMode = useStudyMode({ feature: 'quiz' });
+  const mindmapMode = useStudyMode({ feature: 'mindmap', defaultMode: 'course' });
 
   useEffect(() => {
     // First, find the course ID based on URL parameters
@@ -431,6 +439,28 @@ export default function OptimizedPDFViewer() {
         </div>
       </div>
 
+      {/* Content Hierarchy - Show only when not in learn tab */}
+      {activeTab !== 'learn' && structure && (
+        <ContentHierarchy
+          niveau={niveau}
+          annee={annee}
+          matiere={matiere}
+          currentChapter={
+            structure.chapters.find(ch => 
+              currentPage >= ch.page && currentPage <= ch.end_page
+            ) ? {
+              numero: structure.chapters.find(ch => 
+                currentPage >= ch.page && currentPage <= ch.end_page
+              )!.id.split('ch')[1] ? parseInt(structure.chapters.find(ch => 
+                currentPage >= ch.page && currentPage <= ch.end_page
+              )!.id.split('ch')[1]) : 1,
+              title: structure.chapters.find(ch => 
+                currentPage >= ch.page && currentPage <= ch.end_page
+              )!.title
+            } : undefined
+          }
+        />
+      )}
 
       {/* Main Content */}
       <div className={`flex-1 flex overflow-hidden relative transition-all duration-300 ${
@@ -473,7 +503,7 @@ export default function OptimizedPDFViewer() {
           
           {/* Flashcards View - Always mounted but hidden when not active */}
           <div className={`absolute inset-0 bg-white ${activeTab === 'flashcards' ? 'block' : 'hidden'}`}>
-              <FlashcardsView 
+              <FlashcardsViewEnhanced 
                 chapterId={
                   structure?.chapters.find(ch => 
                     currentPage >= ch.page && currentPage <= ch.end_page
@@ -484,12 +514,16 @@ export default function OptimizedPDFViewer() {
                     currentPage >= ch.page && currentPage <= ch.end_page
                   )?.title || 'Document'
                 }
+                courseId={flashcardsMode.getCourseId(niveau, annee, matiere)}
+                mode={flashcardsMode.mode}
+                onModeChange={flashcardsMode.setMode}
+                totalChapters={structure?.chapters.length}
               />
           </div>
           
           {/* Quiz View - Always mounted but hidden when not active */}
           <div className={`absolute inset-0 bg-white ${activeTab === 'quiz' ? 'block' : 'hidden'}`}>
-              <QuizView 
+              <QuizViewEnhanced 
                 chapterId={
                   structure?.chapters.find(ch => 
                     currentPage >= ch.page && currentPage <= ch.end_page
@@ -500,6 +534,10 @@ export default function OptimizedPDFViewer() {
                     currentPage >= ch.page && currentPage <= ch.end_page
                   )?.title || 'Quiz'
                 }
+                courseId={quizMode.getCourseId(niveau, annee, matiere)}
+                mode={quizMode.mode}
+                onModeChange={quizMode.setMode}
+                totalChapters={structure?.chapters.length}
               />
           </div>
           
