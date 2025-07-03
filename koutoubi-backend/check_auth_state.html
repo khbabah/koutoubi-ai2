@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Check Auth State</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .section {
+            margin: 20px 0;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        .section h2 {
+            margin-top: 0;
+        }
+        pre {
+            background: #f5f5f5;
+            padding: 10px;
+            border-radius: 3px;
+            overflow-x: auto;
+        }
+        button {
+            background: #3b82f6;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover {
+            background: #2563eb;
+        }
+        .danger {
+            background: #ef4444;
+        }
+        .danger:hover {
+            background: #dc2626;
+        }
+    </style>
+</head>
+<body>
+    <h1>Auth State Diagnostic Tool</h1>
+    
+    <div class="section">
+        <h2>Current Auth State</h2>
+        <div id="authState"></div>
+    </div>
+    
+    <div class="section">
+        <h2>LocalStorage Contents</h2>
+        <pre id="localStorage"></pre>
+    </div>
+    
+    <div class="section">
+        <h2>Cookies</h2>
+        <pre id="cookies"></pre>
+    </div>
+    
+    <div class="section">
+        <h2>Actions</h2>
+        <button onclick="clearAuthStorage()">Clear Auth Storage</button>
+        <button onclick="clearAllStorage()" class="danger">Clear All Storage</button>
+        <button onclick="testLogin()">Test Login (Super Admin)</button>
+        <button onclick="refreshPage()">Refresh Page</button>
+    </div>
+    
+    <div class="section">
+        <h2>Test Results</h2>
+        <div id="testResults"></div>
+    </div>
+
+    <script>
+        function displayAuthState() {
+            const authState = document.getElementById('authState');
+            const localStorageDiv = document.getElementById('localStorage');
+            const cookiesDiv = document.getElementById('cookies');
+            
+            // Check auth-storage
+            const authStorage = localStorage.getItem('auth-storage');
+            if (authStorage) {
+                try {
+                    const parsed = JSON.parse(authStorage);
+                    authState.innerHTML = `
+                        <p><strong>User:</strong> ${parsed.state?.user?.email || 'None'}</p>
+                        <p><strong>Role:</strong> ${parsed.state?.user?.role || 'None'}</p>
+                        <p><strong>User ID:</strong> ${parsed.state?.user?.id || 'None'}</p>
+                        <p><strong>Is Authenticated:</strong> ${parsed.state?.isAuthenticated || false}</p>
+                    `;
+                } catch (e) {
+                    authState.innerHTML = '<p>Error parsing auth-storage</p>';
+                }
+            } else {
+                authState.innerHTML = '<p>No auth-storage found</p>';
+            }
+            
+            // Display all localStorage
+            const storage = {};
+            for (let i = 0; i < localStorage.length; i++) {
+                const key = localStorage.key(i);
+                storage[key] = localStorage.getItem(key);
+            }
+            localStorageDiv.textContent = JSON.stringify(storage, null, 2);
+            
+            // Display cookies
+            cookiesDiv.textContent = document.cookie || 'No cookies found';
+        }
+        
+        function clearAuthStorage() {
+            localStorage.removeItem('auth-storage');
+            localStorage.removeItem('auth-token');
+            document.cookie = 'auth-token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
+            displayAuthState();
+            alert('Auth storage cleared');
+        }
+        
+        function clearAllStorage() {
+            if (confirm('This will clear ALL localStorage. Are you sure?')) {
+                localStorage.clear();
+                document.cookie.split(";").forEach(function(c) { 
+                    document.cookie = c.replace(/^ +/, "").replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/"); 
+                });
+                displayAuthState();
+                alert('All storage cleared');
+            }
+        }
+        
+        async function testLogin() {
+            const results = document.getElementById('testResults');
+            results.innerHTML = '<p>Testing login...</p>';
+            
+            try {
+                const response = await fetch('http://localhost:8000/api/v1/auth/token', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    body: 'username=admin@koutoubi.ai&password=Admin123!'
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok && data.access_token) {
+                    // Save token
+                    localStorage.setItem('auth-token', data.access_token);
+                    document.cookie = `auth-token=${data.access_token}; path=/; max-age=604800`;
+                    
+                    // Get profile
+                    const profileResponse = await fetch('http://localhost:8000/api/v1/auth/me', {
+                        headers: {
+                            'Authorization': `Bearer ${data.access_token}`
+                        }
+                    });
+                    
+                    const profile = await profileResponse.json();
+                    
+                    // Save to auth-storage
+                    const authStorage = {
+                        state: {
+                            user: profile,
+                            isAuthenticated: true
+                        },
+                        version: 0
+                    };
+                    localStorage.setItem('auth-storage', JSON.stringify(authStorage));
+                    
+                    results.innerHTML = `
+                        <p style="color: green;">Login successful!</p>
+                        <p>User: ${profile.email}</p>
+                        <p>Role: ${profile.role}</p>
+                        <p>ID: ${profile.id}</p>
+                    `;
+                    
+                    displayAuthState();
+                } else {
+                    results.innerHTML = `<p style="color: red;">Login failed: ${JSON.stringify(data)}</p>`;
+                }
+            } catch (error) {
+                results.innerHTML = `<p style="color: red;">Error: ${error.message}</p>`;
+            }
+        }
+        
+        function refreshPage() {
+            window.location.reload();
+        }
+        
+        // Initial display
+        displayAuthState();
+    </script>
+</body>
+</html>

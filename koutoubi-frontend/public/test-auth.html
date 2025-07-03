@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test Authentication - Koutoubi</title>
+    <style>
+        body { font-family: sans-serif; padding: 20px; max-width: 800px; margin: 0 auto; }
+        .section { margin: 20px 0; padding: 20px; border: 1px solid #ddd; border-radius: 5px; }
+        .success { color: green; }
+        .error { color: red; }
+        .info { color: blue; }
+        button { padding: 10px 20px; margin: 5px; cursor: pointer; }
+        pre { background: #f5f5f5; padding: 10px; overflow: auto; }
+    </style>
+</head>
+<body>
+    <h1>Koutoubi Authentication Test</h1>
+    
+    <div class="section">
+        <h2>1. Clear Everything</h2>
+        <button onclick="clearAll()">Clear All Auth Data</button>
+        <div id="clear-result"></div>
+    </div>
+    
+    <div class="section">
+        <h2>2. Login</h2>
+        <button onclick="login()">Login as Admin</button>
+        <div id="login-result"></div>
+    </div>
+    
+    <div class="section">
+        <h2>3. Check Token</h2>
+        <button onclick="checkToken()">Check Current Token</button>
+        <div id="token-result"></div>
+    </div>
+    
+    <div class="section">
+        <h2>4. Test Admin API</h2>
+        <button onclick="testAdminAPI()">Call Admin API</button>
+        <div id="api-result"></div>
+    </div>
+    
+    <div class="section">
+        <h2>5. Debug Info</h2>
+        <button onclick="getDebugInfo()">Get Debug Info</button>
+        <div id="debug-result"></div>
+    </div>
+
+    <script>
+        const API_BASE = 'http://localhost:8000/api/v1';
+        
+        function clearAll() {
+            localStorage.clear();
+            sessionStorage.clear();
+            document.cookie.split(";").forEach(function(c) { 
+                document.cookie = c.replace(/^ +/, "").replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/"); 
+            });
+            document.getElementById('clear-result').innerHTML = '<p class="success">✓ All auth data cleared</p>';
+        }
+        
+        async function login() {
+            const resultDiv = document.getElementById('login-result');
+            try {
+                const response = await fetch(`${API_BASE}/auth/token`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                    body: 'username=admin@koutoubi.ai&password=Admin123!'
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    // Store token in cookie
+                    document.cookie = `auth-token=${data.access_token}; path=/; max-age=604800`;
+                    localStorage.setItem('auth-token', data.access_token);
+                    
+                    resultDiv.innerHTML = `
+                        <p class="success">✓ Login successful!</p>
+                        <pre>${JSON.stringify(data, null, 2)}</pre>
+                    `;
+                } else {
+                    resultDiv.innerHTML = `<p class="error">✗ Login failed: ${JSON.stringify(data)}</p>`;
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `<p class="error">✗ Error: ${error.message}</p>`;
+            }
+        }
+        
+        function checkToken() {
+            const token = getCookie('auth-token');
+            const resultDiv = document.getElementById('token-result');
+            
+            if (token) {
+                // Decode JWT payload
+                try {
+                    const payload = JSON.parse(atob(token.split('.')[1]));
+                    resultDiv.innerHTML = `
+                        <p class="success">✓ Token found in cookie</p>
+                        <p>Token (first 50 chars): ${token.substring(0, 50)}...</p>
+                        <pre>Payload: ${JSON.stringify(payload, null, 2)}</pre>
+                    `;
+                } catch (e) {
+                    resultDiv.innerHTML = `<p class="info">Token found but couldn't decode: ${e.message}</p>`;
+                }
+            } else {
+                resultDiv.innerHTML = '<p class="error">✗ No token found in cookies</p>';
+            }
+        }
+        
+        async function testAdminAPI() {
+            const token = getCookie('auth-token');
+            const resultDiv = document.getElementById('api-result');
+            
+            if (!token) {
+                resultDiv.innerHTML = '<p class="error">✗ No token found. Please login first.</p>';
+                return;
+            }
+            
+            try {
+                const response = await fetch(`${API_BASE}/admin/users/stats`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    resultDiv.innerHTML = `
+                        <p class="success">✓ Admin API call successful!</p>
+                        <pre>${JSON.stringify(data, null, 2)}</pre>
+                    `;
+                } else {
+                    resultDiv.innerHTML = `
+                        <p class="error">✗ API call failed (${response.status})</p>
+                        <pre>${JSON.stringify(data, null, 2)}</pre>
+                    `;
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `<p class="error">✗ Error: ${error.message}</p>`;
+            }
+        }
+        
+        async function getDebugInfo() {
+            const resultDiv = document.getElementById('debug-result');
+            
+            try {
+                // Get auth config
+                const configResponse = await fetch(`${API_BASE}/auth-debug/config`);
+                const config = await configResponse.json();
+                
+                // Get current auth state if token exists
+                const token = getCookie('auth-token');
+                let authState = null;
+                
+                if (token) {
+                    const verifyResponse = await fetch(`${API_BASE}/auth-debug/verify`, {
+                        headers: { 'Authorization': `Bearer ${token}` }
+                    });
+                    if (verifyResponse.ok) {
+                        authState = await verifyResponse.json();
+                    }
+                }
+                
+                resultDiv.innerHTML = `
+                    <h3>Backend Config:</h3>
+                    <pre>${JSON.stringify(config, null, 2)}</pre>
+                    <h3>Current Auth State:</h3>
+                    <pre>${authState ? JSON.stringify(authState, null, 2) : 'Not authenticated'}</pre>
+                `;
+            } catch (error) {
+                resultDiv.innerHTML = `<p class="error">✗ Error: ${error.message}</p>`;
+            }
+        }
+        
+        function getCookie(name) {
+            const value = `; ${document.cookie}`;
+            const parts = value.split(`; ${name}=`);
+            if (parts.length === 2) return parts.pop().split(';').shift();
+        }
+    </script>
+</body>
+</html>

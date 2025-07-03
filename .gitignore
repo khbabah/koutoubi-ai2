@@ -1,0 +1,40 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyc
+.Python
+venv/
+*.log
+.pytest_cache/
+.coverage
+*.db-journal
+
+# Node
+node_modules/
+.next/
+out/
+dist/
+npm-debug.log*
+
+# Environment
+.env
+.env.local
+.env.production
+
+# IDE
+.vscode/
+.idea/
+*.swp
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Project
+pdf_cache/
+screenshots/
+test_*.*
+*.tmp
+
+# Important: Keep the database!
+# koutoubi.db
