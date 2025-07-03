@@ -3,28 +3,29 @@ Course-level aggregation endpoints for flashcards, quiz, and mindmaps
 """
 from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.orm import Session
+from sqlalchemy import func
 from typing import List, Optional
 
 from app.core.database import get_db
-from app.core.security import get_current_user
-from app.models.user import User
+from app.api.auth import get_current_user
+from app.models.user import User as UserModel
 from app.models.chapter import Chapter
 from app.models.flashcard import Flashcard
 from app.models.quiz import QuizQuestion
 from app.models.mindmap import Mindmap
-from app.schemas.flashcard import FlashcardResponse
+from app.schemas.flashcard import Flashcard as FlashcardSchema
 from app.schemas.quiz import QuizQuestion as QuizQuestionSchema
 
 router = APIRouter()
 
 
-@router.get("/courses/{course_id}/flashcards", response_model=List[FlashcardResponse])
+@router.get("/courses/{course_id}/flashcards", response_model=List[FlashcardSchema])
 async def get_course_flashcards(
     course_id: str,
     limit: Optional[int] = Query(None, description="Limit number of flashcards"),
     random: bool = Query(False, description="Randomize flashcards"),
     difficulty: Optional[str] = None,
-    current_user: User = Depends(get_current_user),
+    current_user: UserModel = Depends(get_current_user),
     db: Session = Depends(get_db)
 ):
     """Get all flashcards for a course (all chapters combined)"""
@@ -59,7 +60,7 @@ async def get_course_quiz(
     limit: Optional[int] = Query(20, description="Number of questions"),
     random: bool = Query(True, description="Randomize questions"),
     difficulty: Optional[str] = None,
-    current_user: User = Depends(get_current_user),
+    current_user: UserModel = Depends(get_current_user),
     db: Session = Depends(get_db)
 ):
     """Get quiz questions for entire course (all chapters combined)"""
@@ -91,7 +92,7 @@ async def get_course_quiz(
 @router.get("/courses/{course_id}/chapters")
 async def get_course_chapters(
     course_id: str,
-    current_user: User = Depends(get_current_user),
+    current_user: UserModel = Depends(get_current_user),
     db: Session = Depends(get_db)
 ):
     """Get all chapters for a course with their metadata"""
@@ -137,7 +138,7 @@ async def get_course_chapters(
 async def generate_course_mindmap(
     course_id: str,
     regenerate: bool = Query(False, description="Force regeneration"),
-    current_user: User = Depends(get_current_user),
+    current_user: UserModel = Depends(get_current_user),
     db: Session = Depends(get_db)
 ):
     """Generate or retrieve mindmap for entire course"""
@@ -161,7 +162,7 @@ async def generate_course_mindmap(
 async def generate_chapter_mindmap(
     chapter_id: str,
     regenerate: bool = Query(False, description="Force regeneration"),
-    current_user: User = Depends(get_current_user),
+    current_user: UserModel = Depends(get_current_user),
     db: Session = Depends(get_db)
 ):
     """Generate or retrieve mindmap for specific chapter"""
@@ -184,5 +185,4 @@ async def generate_chapter_mindmap(
     return {"message": "Mindmap generation for chapter not yet implemented"}
 
 
-# Import necessary functions
-from sqlalchemy import func
+# Import moved to top of file
