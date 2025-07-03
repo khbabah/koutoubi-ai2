@@ -186,7 +186,7 @@ def delete_quiz(
     return {"message": "Quiz supprimé avec succès"}
 
 
-# === FLASHCARD MANAGEMENT ===
+# === flashcard management ===
 
 @router.post("/flashcard-decks", response_model=FlashcardDeck)
 def create_flashcard_deck(
