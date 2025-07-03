@@ -449,7 +449,7 @@ export default function PricingPage() {
                     </td>
                   </tr>
                   <tr className="border-b border-gray-100">
-                    <td className="p-4 text-gray-600">Cartes mentales</td>
+                    <td className="p-4 text-gray-600">Mindmaps</td>
                     <td className="p-4 text-center text-sm text-gray-500">
                       2/mois
                     </td>

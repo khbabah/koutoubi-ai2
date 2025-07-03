@@ -337,7 +337,7 @@ export default function OptimizedPDFViewer() {
               onClick={() => setActiveTab('flashcards')}
             >
               <Brain className="h-4 w-4" />
-              <span>Cartes</span>
+              <span>Flashcards</span>
               {!isPremium && subStatus && (
                 <div className="absolute -top-1 -right-1">
                   <div className="bg-orange-500 text-white text-[10px] px-1.5 py-0.5 rounded-full">
@@ -380,7 +380,7 @@ export default function OptimizedPDFViewer() {
                 <circle cx="19" cy="12" r="2" />
                 <path d="M12 9v6M9 12h6" />
               </svg>
-              <span>Carte mentale</span>
+              <span>Mindmap</span>
               {!isPremium && subStatus && (
                 <div className="absolute -top-1 -right-1">
                   <div className="bg-orange-500 text-white text-[10px] px-1.5 py-0.5 rounded-full">
@@ -395,9 +395,9 @@ export default function OptimizedPDFViewer() {
           <div className="sm:hidden flex items-center gap-2 text-sm">
             <span className="text-gray-600">
               {activeTab === 'learn' && 'Cours'}
-              {activeTab === 'flashcards' && 'Cartes'}
+              {activeTab === 'flashcards' && 'Flashcards'}
               {activeTab === 'quiz' && 'Quiz'}
-              {activeTab === 'mindmap' && 'Carte mentale'}
+              {activeTab === 'mindmap' && 'Mindmap'}
             </span>
           </div>
         </div>
@@ -561,7 +561,7 @@ export default function OptimizedPDFViewer() {
                       <Button className="bg-purple-600 hover:bg-purple-700 text-white text-xs sm:text-sm gap-1 sm:gap-2 px-2 sm:px-3 py-1 sm:py-2">
                         <Brain className="h-3 w-3 sm:h-4 sm:w-4" />
                         <span className="hidden sm:inline">Créer des cartes IA</span>
-                        <span className="sm:hidden">Cartes IA</span>
+                        <span className="sm:hidden">AI Flashcards</span>
                       </Button>
                     </div>
                   </div>
@@ -679,7 +679,7 @@ export default function OptimizedPDFViewer() {
               <circle cx="19" cy="12" r="2" />
               <path d="M12 9v6M9 12h6" />
             </svg>
-            <span className="text-xs">Carte</span>
+            <span className="text-xs">Mindmap</span>
           </button>
         </div>
       </div>

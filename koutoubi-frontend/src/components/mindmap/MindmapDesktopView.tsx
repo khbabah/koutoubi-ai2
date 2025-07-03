@@ -410,7 +410,7 @@ export default function MindmapDesktopView({
         document.body.removeChild(a);
         URL.revokeObjectURL(url);
         
-        toast.success('Carte mentale téléchargée en PNG');
+        toast.success('Mindmap downloaded as PNG');
       }, 'image/png', 0.95);
       
     } catch (error) {
@@ -424,7 +424,7 @@ export default function MindmapDesktopView({
     <div ref={containerRef} className={`h-full flex flex-col ${isFullscreen ? 'bg-white' : 'bg-gray-50'}`}>
       {/* Toolbar */}
       <div className="flex items-center justify-between p-4 bg-white border-b">
-        <h2 className="text-lg font-semibold">Carte Mentale</h2>
+        <h2 className="text-lg font-semibold">Mindmap</h2>
         
         <div className="flex items-center gap-2">
           <Button

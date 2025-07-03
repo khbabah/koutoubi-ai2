@@ -380,7 +380,7 @@ export default function MindmapModernView({
             <Sparkles className="h-5 w-5 text-white" />
           </div>
           <h2 className="text-lg font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-            Carte Mentale
+            Mindmap
           </h2>
         </div>
         

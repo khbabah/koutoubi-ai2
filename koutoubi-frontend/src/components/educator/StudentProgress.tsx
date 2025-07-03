@@ -128,7 +128,7 @@ export default function StudentProgress() {
                 <div className="text-center p-3 bg-purple-50 rounded-lg">
                   <BookOpen className="h-8 w-8 text-purple-600 mx-auto mb-2" />
                   <p className="text-2xl font-bold">{student.flashcards_reviewed}</p>
-                  <p className="text-xs text-gray-600">Cartes révisées</p>
+                  <p className="text-xs text-gray-600">Flashcards reviewed</p>
                 </div>
 
                 <div className="text-center p-3 bg-orange-50 rounded-lg">

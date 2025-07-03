@@ -78,7 +78,7 @@ export function useMindmap(pdfId: string) {
               // Check if user can generate a new mindmap
               const usage = getFeatureUsage('mindmap_generation');
               if (usage && usage.remaining === 0 && !isPremium) {
-                toast.error('Limite de génération de cartes mentales atteinte. Passez à Premium pour continuer.');
+                toast.error('Mindmap generation limit reached. Passez à Premium pour continuer.');
                 router.push('/pricing');
                 throw new Error('Limite atteinte');
               }
@@ -146,7 +146,7 @@ export function useMindmap(pdfId: string) {
     // Check if user can regenerate
     const usage = getFeatureUsage('mindmap_generation');
     if (usage && usage.remaining === 0 && !isPremium) {
-      toast.error('Limite de génération de cartes mentales atteinte. Passez à Premium pour continuer.');
+      toast.error('Mindmap generation limit reached. Passez à Premium pour continuer.');
       router.push('/pricing');
       return;
     }
@@ -171,9 +171,9 @@ export function useMindmap(pdfId: string) {
       const content = JSON.parse(data.content) as MindmapData;
       setMindmapData(content);
       
-      toast.success('Carte mentale régénérée');
+      toast.success('Mindmap regenerated');
     } catch (err: any) {
-      toast.error('Erreur lors de la régénération de la carte mentale');
+      toast.error('Error regenerating mindmap');
     } finally {
       setLoading(false);
     }

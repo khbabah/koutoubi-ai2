@@ -27,7 +27,7 @@ export default function Home() {
     {
       icon: Brain,
       title: 'Mode Learn intelligent',
-      description: 'Résumés IA, cartes mentales, flashcards et quiz personnalisés',
+      description: 'AI summaries, mindmaps, flashcards and personalized quizzes',
     },
     {
       icon: Trophy,

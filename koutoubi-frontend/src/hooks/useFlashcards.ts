@@ -75,7 +75,7 @@ export function useFlashcards(chapterId?: string, mode: 'all' | 'due' = 'all') {
         });
         
         setFlashcards(generateResponse.data);
-        toast.success('Cartes de révision générées avec succès!');
+        toast.success('Flashcards generated successfully!');
       } else {
         // No due cards in 'due' mode
         setFlashcards([]);

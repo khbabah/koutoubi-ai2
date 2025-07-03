@@ -167,7 +167,7 @@ export default function FlashcardsModal({
     if (currentCard) {
       // Send feedback to API
       await submitFeedback(currentCard.id, { feedback: 'disabled' });
-      toast('Carte désactivée', { icon: 'ℹ️' });
+      toast('Flashcard disabled', { icon: 'ℹ️' });
     }
     if (currentIndex < filteredCards.length - 1) {
       setTimeout(() => handleNext(), 500);

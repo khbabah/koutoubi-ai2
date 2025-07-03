@@ -552,7 +552,7 @@ export default function ProfilePage() {
 
                     {/* Mindmaps */}
                     <div className="flex items-center justify-between">
-                      <span className="text-sm text-gray-600">Cartes mentales générées</span>
+                      <span className="text-sm text-gray-600">Mindmaps generated</span>
                       <div className="flex items-center gap-2">
                         {subStatus.usage_stats.mindmap_generation.limit ? (
                           <>

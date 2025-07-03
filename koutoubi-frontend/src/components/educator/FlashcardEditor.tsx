@@ -86,7 +86,7 @@ export default function FlashcardEditor({
 
   const removeCard = (index: number) => {
     if (cards.length === 1) {
-      toast.error('Le deck doit contenir au moins une carte');
+      toast.error('The deck must contain at least one flashcard');
       return;
     }
     
@@ -120,19 +120,19 @@ export default function FlashcardEditor({
     }
 
     if (cards.length === 0) {
-      toast.error('Ajoutez au moins une carte');
+      toast.error('Add at least one flashcard');
       return false;
     }
 
     for (let i = 0; i < cards.length; i++) {
       const card = cards[i];
       if (!card.front_text.trim()) {
-        toast.error(`Carte ${i + 1}: Le recto est requis`);
+        toast.error(`Flashcard ${i + 1}: Front is required`);
         setActiveCard(i);
         return false;
       }
       if (!card.back_text.trim()) {
-        toast.error(`Carte ${i + 1}: Le verso est requis`);
+        toast.error(`Flashcard ${i + 1}: Back is required`);
         setActiveCard(i);
         return false;
       }
@@ -195,10 +195,10 @@ export default function FlashcardEditor({
       {/* Header */}
       <div className="mb-6">
         <h2 className="text-2xl font-bold mb-2">
-          {deckId ? 'Modifier le deck' : 'Créer un deck de cartes'}
+          {deckId ? 'Modifier le deck' : 'Create flashcard deck'}
         </h2>
         <p className="text-gray-600 text-sm">
-          Créez des cartes de révision simples et efficaces
+          Create simple and effective flashcards
         </p>
       </div>
 
@@ -249,7 +249,7 @@ export default function FlashcardEditor({
         </div>
         <Button onClick={addCard} size="sm">
           <Plus className="h-4 w-4 mr-1" />
-          Ajouter une carte
+          Add flashcard
         </Button>
       </div>
 
@@ -452,7 +452,7 @@ export default function FlashcardEditor({
           >
             <div className="text-center">
               <Plus className="h-8 w-8 mx-auto mb-2 text-gray-400" />
-              <p className="text-sm text-gray-600">Ajouter une carte</p>
+              <p className="text-sm text-gray-600">Add flashcard</p>
             </div>
           </Card>
         </div>

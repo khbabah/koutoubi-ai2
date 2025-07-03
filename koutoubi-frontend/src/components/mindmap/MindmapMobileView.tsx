@@ -289,7 +289,7 @@ export default function MindmapMobileView({
     <div className="h-full flex flex-col bg-gray-50">
       {/* Header */}
       <div className="p-4 bg-white border-b">
-        <h2 className="text-lg font-semibold">Carte Mentale</h2>
+        <h2 className="text-lg font-semibold">Mindmap</h2>
         <p className="text-sm text-gray-600 mt-1">
           Touchez pour développer ou réduire
         </p>

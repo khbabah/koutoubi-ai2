@@ -67,7 +67,7 @@ export default function FlashcardsView({ chapterId, chapterTitle }: FlashcardsVi
   const handleDisableCard = async () => {
     if (currentCard) {
       await submitFeedback(currentCard.id, { feedback: 'disabled' });
-      toast('Carte désactivée', { icon: 'ℹ️' });
+      toast('Flashcard disabled', { icon: 'ℹ️' });
       if (currentIndex < flashcards.length - 1) {
         setTimeout(() => handleNext(), 500);
       }
@@ -88,7 +88,7 @@ export default function FlashcardsView({ chapterId, chapterTitle }: FlashcardsVi
         <h2 className="text-2xl font-semibold mb-4">Aucune flashcard disponible</h2>
         <p className="text-gray-600 text-center">
           {practiceMode === 'due' 
-            ? "Félicitations ! Vous n'avez aucune carte à réviser pour le moment."
+            ? "Congratulations! You have no flashcards to review at the moment."
             : "Aucune flashcard n'est disponible pour ce chapitre."}
         </p>
         {practiceMode === 'due' && (
@@ -96,7 +96,7 @@ export default function FlashcardsView({ chapterId, chapterTitle }: FlashcardsVi
             className="mt-4"
             onClick={() => setPracticeMode('all')}
           >
-            Voir toutes les cartes
+            View all flashcards
           </Button>
         )}
       </div>
@@ -108,7 +108,7 @@ export default function FlashcardsView({ chapterId, chapterTitle }: FlashcardsVi
       {/* Header */}
       <div className="flex items-center justify-between mb-6">
         <div className="flex items-center gap-4">
-          <h2 className="text-2xl font-semibold">Cartes de révision</h2>
+          <h2 className="text-2xl font-semibold">Flashcards</h2>
           <Badge variant="outline">{currentIndex + 1} / {flashcards.length}</Badge>
           
           {/* Practice Mode Selector */}
@@ -131,7 +131,7 @@ export default function FlashcardsView({ chapterId, chapterTitle }: FlashcardsVi
               }`}
               onClick={() => setPracticeMode('all')}
             >
-              Toutes les cartes
+              All flashcards
             </button>
           </div>
         </div>
